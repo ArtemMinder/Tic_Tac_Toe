@@ -105,13 +105,12 @@ void Game::start() {
 	if (rst == 0) {
 		std::cout << "         Select game mode: For two(1)/With computer(0)" << std::endl;
 		std::cin >> answer;
-		while (!(checkAnswer(1, answer))) { std::cin >> answer;
-		}
+		//while (!(checkAnswer(1, answer)) || std::cin.fail()) { std::cin >> answer;}
 	}
 	else {
 		std::cout << "         You have an unfinished game, do You want to continue? Yes(1)/No(0)" << std::endl;
 		std::cin >> answer;
-		while (!(checkAnswer(1, answer))||std::cin.fail()) { std::cin >> answer; }
+		//while (!(checkAnswer(1, answer))||std::cin.fail()) { std::cin >> answer; }
 		if (answer) {
 			if (answer == 2) {
 				sm.process_event(game_exit());
@@ -162,7 +161,7 @@ void Game::start() {
 
 		std::cout << players[priority].getName() << ", you are lucky to pick a sign first, choose your sign.  X(1)/O(0):";
 		std::cin >> answer;
-		while (!(checkAnswer(2, answer))) { std::cin >> answer; }
+		//while (!(checkAnswer(2, answer))) { std::cin >> answer; }
 		system("cls");
 		if (answer) {
 			players[priority].setSign('X');
@@ -220,7 +219,7 @@ void Game::play(int priority) {
 		for (auto i = 0; i < 9; i++) {
 			std::cout << "               " << players[priority].getName() << ", your turn: ";
 			std::cin >> turn;
-			while (!(checkAnswer(3, turn))) { std::cin >> turn; }
+			//while (!(checkAnswer(3, turn))) { std::cin >> turn; }
 			if (turn == 9)
 			{
 				system("cls");
@@ -257,7 +256,7 @@ void Game::play(int priority) {
 		std::cout << "                  No one won" << std::endl;
 		std::cout << "         Do you want to play again? Yes(1)/No(0)";
 		std::cin >> answer;
-		while (!(checkAnswer(4, answer))) { std::cin >> answer; }
+		//while (!(checkAnswer(4, answer))) { std::cin >> answer; }
 		if (answer) {
 			restart();
 		}
@@ -272,7 +271,7 @@ void Game::play(int priority) {
 		for (auto i = 0; i < 4; i++) {
 			std::cout << "      " << players[0].getName() << ", your turn: ";
 			std::cin >> turn;
-			while (!(checkAnswer(3, turn))) { std::cin >> turn; }
+			//while (!(checkAnswer(3, turn))) { std::cin >> turn; }
 			if (turn == 9) {
 				system("cls");
 				rst = 1;
@@ -314,7 +313,7 @@ void Game::play(int priority) {
 	std::cout << "                  No one won" << std::endl;
 	std::cout << "         Do you want to play again? Yes(1)/No(0)";
 	std::cin >> answer;
-	while (!(checkAnswer(4, answer))) { std::cin >> answer; }
+	//while (!(checkAnswer(4, answer))) { std::cin >> answer; }
 	if (answer) {
 		restart();
 	}
@@ -373,7 +372,7 @@ void Game::congratulation(char sign) {
 	}
 	std::cout << "         Do you want to play again? Yes(1)/No(0): ";
 	std::cin >> answer;
-	while (!(checkAnswer(4, answer))) { std::cin >> answer; }
+	//while (!(checkAnswer(4, answer))) { std::cin >> answer; }
 	if (answer) {
 		restart();
 	}
@@ -382,48 +381,46 @@ void Game::congratulation(char sign) {
 		exit(0);
 	}
 }
-bool Game::checkAnswer(int var, int answer) {
-	if(var ==1){
-	  
+bool Game::checkAnswer(int var, std::string answer) {
+	switch (var) {
+	case 1: {
+			const std::regex myRegex1("[0-2]");
+			if (!(std::regex_match(answer, myRegex1))) {
+				std::cout << "Incorrect answer\n";
+				return false;
+			}
+			else return true;
+			break;
+		}
+	case 2:  {
+			const std::regex myRegex2("[0-1]");
+			if (!(std::regex_match(answer, myRegex2))) {
+				std::cout << "Incorrect answer\n";
+				return false;
+			}
+			else return true;
+			break;
+		}
+	case 3: {
+			const std::regex myRegex3("[0-9]");
+			if (!(std::regex_match(answer, myRegex3))) {
+				std::cout << "Incorrect answer\n";
+				return false;
+			}
+			else return true;
+			break;
+		}
+	case 4:  {
+			const std::regex myRegex4("[0,1,9]");
+			if (!(std::regex_match(answer, myRegex4))) {
+				std::cout << "Incorrect answer\n";
+				break;
+			}
+			else return true;
+			break;
+		}
+	}
 	
-	 if (answer == 0 || answer == 1 || answer == 2) {
-			return true;
-		}
-		
-		else {
-			std::cout << "Incorrect answer\n";
-			return false;
-		};
-	}
-	else if(var==2) {
-		if (answer == 0 || answer == 1) {
-			return true;
-		}
-		else {
-			std::cout << "Incorrect answer\n";
-			return false;
-		};
-	}
-	else if(var == 3) {
-		if (answer == 0 || answer == 1 || answer == 2|| answer == 3 
-			|| answer == 4 || answer == 5 || answer == 6 
-			|| answer == 7 || answer == 8 || answer == 9) {
-			return true;
-		}
-		else {
-			std::cout << "Incorrect answer\n";
-			return false;
-		};
-	}
-	else if (var == 4) {
-		if (answer == 0 || answer == 1 || answer == 9) {
-			return true;
-		}
-		else {
-			std::cout << "Incorrect answer\n";
-			return false;
-		};
-	}
 }
 
 

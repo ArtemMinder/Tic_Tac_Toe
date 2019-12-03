@@ -63,7 +63,7 @@ public:
 	void restart();
 	void checkWin(char sign);
 	void congratulation(char sign);
-	bool checkAnswer(int var,int answer);
+	bool checkAnswer(int var, std::string answer);
 
 private:
 	std::vector<Player> players{};
