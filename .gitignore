@@ -12,6 +12,7 @@ x64
 
 *.vcxproj
 
+*.sln
+
 *.vcxproj.*
 
-*.sln
