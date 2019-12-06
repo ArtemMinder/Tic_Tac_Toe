@@ -33,13 +33,13 @@ struct ExitGame :sc::simple_state<ExitGame, GameSM> {
 
 
 
-void Player::setName(std::string newName) {
-	name = newName;
+ void  Player::setName(const std::string& newName) {
+	name = std::move(newName);
 }
-std::string Player::getName() {
+std::string Player::getName() const{
 	return name;
 }
-void Player::setSign(char newSign) {
+void Player::setSign(const char& newSign) {
 	sign = newSign;
 }
 char Player::getSign() const {
@@ -47,10 +47,10 @@ char Player::getSign() const {
 }
 
 
-void Board::setField(char newSign, int position) {
+void Board::setField(const char& newSign, const int& position) {
 	field[position] = newSign;
 }
-std::vector<char> Board::getField() {
+std::vector<char> Board::getField() const {
 	return field;
 }
 void Board::showField() const {
@@ -60,7 +60,7 @@ void Board::showField() const {
 		<< "]" << "[" << field[8] << "]" << std::endl;
 }
 void Board::clearField() {
-	field = { a,a,a,a,a,a,a,a,a };
+	field = { a,a,a,a,a,a,a,a,a};
 }
 
 void Game::start() {
@@ -186,7 +186,7 @@ void Game::start() {
 
 	play(priority);
 }
-void Game::play(int priority) {
+void Game::play(int& priority) {
 	bool answer{};
 	char sign{};
 	int turn{};
@@ -323,7 +323,7 @@ void Game::play(int priority) {
 	}
 }
 
-void Game::makeMove(char sign, int move) {
+void Game::makeMove(const char& sign,const int& move) {
 	board.setField(sign, move);
 }
 
@@ -335,7 +335,7 @@ void Game::restart() {
 	system("cls");
 	start();
 }
-void Game::checkWin(char sign) {
+void Game::checkWin(const char& sign) {
 	auto moves = board.getField();
 	if (moves[0] == moves[1] && moves[1] == moves[2] && moves[0, 1, 2] != ' ') {
 		congratulation(sign);
@@ -362,7 +362,7 @@ void Game::checkWin(char sign) {
 		congratulation(sign);
 	}
 }
-void Game::congratulation(char sign) {
+void Game::congratulation(const char& sign) {
 	bool answer{};
 	if (sign == 'X') {
 		std::cout << "         X - Wins!" << std::endl;
@@ -381,7 +381,7 @@ void Game::congratulation(char sign) {
 		exit(0);
 	}
 }
-bool Game::checkAnswer(int var, std::string answer) {
+bool Game::checkAnswer(const int& var,const std::string& answer) {
 	switch (var) {
 	case 1: {
 			const std::regex myRegex1("[0-2]");

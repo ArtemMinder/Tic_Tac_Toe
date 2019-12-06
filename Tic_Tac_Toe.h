@@ -35,9 +35,9 @@ struct GameSM : sc::state_machine<GameSM, InitGame> {};
 class Player {
 public:
 	Player() = default;
-	void setName(std::string newName);
-	std::string getName();
-	void setSign(char newSign);
+	void setName(const std::string& newName);
+	std::string getName() const;
+	void setSign(const char& newSign);
 	char getSign() const;
 private:
 	std::string name{};
@@ -46,8 +46,8 @@ private:
 
 class Board {
 public:
-	void setField(char newSign, int position);
-	std::vector<char> getField();
+	void setField(const char& newSign, const int& position);
+	std::vector<char> getField()const;
 	void showField() const;
 	void clearField();
 private:
@@ -58,12 +58,12 @@ private:
 class Game {
 public:
 	void	start();
-	void play(int priority);
-	void makeMove(char sign, int move);
+	void play(int& priority);
+	void makeMove(const char& sign, const int& move);
 	void restart();
-	void checkWin(char sign);
-	void congratulation(char sign);
-	bool checkAnswer(int var, std::string answer);
+	void checkWin(const char& sign);
+	void congratulation(const char& sign);
+	bool checkAnswer(const int& var, const std::string& answer);
 
 private:
 	std::vector<Player> players{};
