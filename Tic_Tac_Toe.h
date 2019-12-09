@@ -46,13 +46,13 @@ private:
 
 class Board {
 public:
+	Board();
 	void setField(const char& newSign, const int& position);
 	std::vector<char> getField()const;
 	void showField() const;
 	void clearField();
 private:
-	char a = ' ';
-	std::vector<char> field = { a,a,a,a,a,a,a,a,a };
+	std::vector<char> field{};
 };
 
 class Game {
@@ -63,14 +63,13 @@ public:
 	void restart();
 	void checkWin(const char& sign);
 	void congratulation(const char& sign);
-	bool checkAnswer(const int& var, const std::string& answer);
+	bool validation(const int& var, const std::string& answer);
 
 private:
 	std::vector<Player> players{};
 	Board board;
-	bool mode{};
-	bool rst = 0;
+	bool botMode = false;
+	bool rst = false;
 	GameSM sm;
 };
-
 #endif
