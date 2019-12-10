@@ -64,7 +64,10 @@ public:
 	void checkWin(const char& sign);
 	void congratulation(const char& sign);
 	bool validation(const int& var, const std::string& answer);
+<<<<<<< HEAD
 	bool noRepaint(const std::string& turn);
+=======
+>>>>>>> ede936a724db25a6ac0fda1ce9cbaaf52e2db9d6
 
 private:
 	std::vector<Player> players{};
