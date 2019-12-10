@@ -1,7 +1,6 @@
 #include "Tic_Tac_Toe.h"
 
 
-
 struct InitGame :sc::simple_state<InitGame, GameSM> {
 	InitGame() { std::cout << "\t\t\t\t*IN INIT STATE...*" << std::endl; }
 	typedef sc::transition<game_menu, MenuGame>reactions;
@@ -33,10 +32,10 @@ struct ExitGame :sc::simple_state<ExitGame, GameSM> {
 
 
 
- void  Player::setName(const std::string& newName) {
-	name = std::move(newName);
+void  Player::setName(const std::string& newName) {
+	name = newName;
 }
-std::string Player::getName() const{
+std::string Player::getName() const {
 	return name;
 }
 void Player::setSign(const char& newSign) {
@@ -46,6 +45,11 @@ char Player::getSign() const {
 	return sign;
 }
 
+
+Board::Board() {
+	std::vector<char> init(9, ' ');
+	field = init;
+}
 
 void Board::setField(const char& newSign, const int& position) {
 	field[position] = newSign;
@@ -60,13 +64,13 @@ void Board::showField() const {
 		<< "]" << "[" << field[8] << "]" << std::endl;
 }
 void Board::clearField() {
-	field = { a,a,a,a,a,a,a,a,a};
+	std::vector<char> init(9, ' ');
+	field = init;
 }
 
 void Game::start() {
-	int priority{};
-	int answer{};
-
+	int priority = 0;
+	std::string answer{};
 	sm.initiate();
 	std::string first{};
 	std::string second{};
@@ -74,10 +78,10 @@ void Game::start() {
 	players.push_back(player1);
 	Player player2;
 	players.push_back(player2);
-	if (rst == 0) {
+	if (!rst) {
 		sm.process_event(game_init());
 	}
-	else if (rst == 1) {
+	else if (rst) {
 		sm.process_event(game_restart());
 	}
 
@@ -102,94 +106,82 @@ void Game::start() {
 	sm.process_event(game_menu());
 	std::cout << "                         *GAME MENU*" << std::endl;
 	std::cout << "               If You want to exit - press 2" << std::endl;
-	if (rst == 0) {
+	if (!rst) {
 		std::cout << "         Select game mode: For two(1)/With computer(0)" << std::endl;
 		std::cin >> answer;
-		//while (!(checkAnswer(1, answer)) || std::cin.fail()) { std::cin >> answer;}
+		while (!validation(1, answer)) { std::cin >> answer; }
+		if (answer == "2") {
+			sm.process_event(game_exit());
+			exit(0);
+		}
+		else if (answer == "0") {
+			std::cout << "         Enter your name: ";
+			std::cin >> first;
+			players[0].setName(first);
+			players[1].setName("Computer");
+			botMode = true;
+			answer = true;
+			system("cls");
+		}
+		else if (answer == "1") {
+			std::cout << "         Enter the name of 1st player: ";
+			std::cin >> first;
+			std::cout << "         Enter the name of 2nd player: ";
+			std::cin >> second;
+			players[0].setName(first);
+			players[1].setName(second);
+			std::random_device dev;
+			std::mt19937 engine(dev());
+			std::uniform_int_distribution<int> uid(0, 1);
+			priority = uid(engine);
+
+			std::cout << players[priority].getName() << ", you are lucky to pick a sign first, choose your sign.  X(1)/O(0):";
+			std::cin >> answer;
+			while (!validation(2, answer)) { std::cin >> answer; }
+			system("cls");
+			if (answer != "0") {
+				players[priority].setSign('X');
+			}
+			else {
+				players[priority].setSign('O');
+			}
+			if (priority == 0) {
+				priority = 1;
+			}
+			else if (priority == 1) {
+				priority = 0;
+			}
+			if (answer != "0") {
+				players[priority].setSign('O');
+			}
+			else { players[priority].setSign('X'); }
+		}
 	}
-	else {
+	else if (rst) {
 		std::cout << "         You have an unfinished game, do You want to continue? Yes(1)/No(0)" << std::endl;
 		std::cin >> answer;
-		//while (!(checkAnswer(1, answer))||std::cin.fail()) { std::cin >> answer; }
-		if (answer) {
-			if (answer == 2) {
-				sm.process_event(game_exit());
-				exit(0);
-			}
+		while (!validation(1, answer)) { std::cin >> answer; }
+		if (answer == "1") {
 			system("cls");
 			play(priority);
 		}
-		else if (answer == 2) {
-				sm.process_event(game_exit());
-				exit(0);
-			rst = 0;
-			restart();
-			if (answer == 0) {
-				start();
-			}
+		else if (answer == "2") {
+			sm.process_event(game_exit());
+			exit(0);
 		}
-		else if (answer == 0) {
+		else if (answer == "0") {
 			system("cls");
-			rst = 0;
+			board.clearField();
+			rst = false;
 			start();
 		}
 	}
-	if (answer == 2) {
-		sm.process_event(game_exit());
-		exit(0);
-	}
-	if (!answer) {
-		std::cout << "         Enter your name: ";
-		std::cin >> first;
-		players[0].setName(first);
-		players[1].setName("Computer");
-		mode = true;
-		answer = true;
-		system("cls");
-	}
-	else {
-		std::cout << "         Enter the name of 1st player: ";
-		std::cin >> first;
-		std::cout << "         Enter the name of 2nd player: ";
-		std::cin >> second;
-		players[0].setName(first);
-		players[1].setName(second);
-		std::random_device dev;
-		std::mt19937 engine(dev());
-		std::uniform_int_distribution<int> uid(0, 1);
-		priority = uid(engine);
-
-		std::cout << players[priority].getName() << ", you are lucky to pick a sign first, choose your sign.  X(1)/O(0):";
-		std::cin >> answer;
-		//while (!(checkAnswer(2, answer))) { std::cin >> answer; }
-		system("cls");
-		if (answer) {
-			players[priority].setSign('X');
-
-		}
-		else {
-			players[priority].setSign('O');
-
-		}
-		if (priority == 0) {
-			priority = 1;
-
-		}
-		else if (priority == 1) {
-			priority = 0;
-		}
-		if (answer) {
-			players[priority].setSign('O');
-		}
-		else { players[priority].setSign('X'); }
-	}
-
 	play(priority);
 }
 void Game::play(int& priority) {
-	bool answer{};
+	std::string answer{};
 	char sign{};
-	int turn{};
+	int turn = 0;
 	if (priority == 0) {
 		priority = 1;
 	}
@@ -215,22 +207,22 @@ void Game::play(int& priority) {
 	sm.process_event(game_run());
 	std::cout << "                If You go to menu - press 9" << std::endl;
 	board.showField();
-	if (mode == false) {
+	if (botMode == false) {
 		for (auto i = 0; i < 9; i++) {
 			std::cout << "               " << players[priority].getName() << ", your turn: ";
-			std::cin >> turn;
-			//while (!(checkAnswer(3, turn))) { std::cin >> turn; }
-			if (turn == 9)
-			{
+			std::cin >> answer;
+			while (!validation(3, answer)|| !noRepaint(answer)) { std::cin >> answer; }
+			turn = std::stoi(answer);
+			
+			if (turn == 9) {
 				system("cls");
-				rst = 1;
+				rst = true;
 				if (priority == 1) {
 					priority = 0;
 				}
 				else if (priority == 0) {
 					priority = 1;
 				}
-
 				restart();
 			}
 			sign = players[priority].getSign();
@@ -251,36 +243,35 @@ void Game::play(int& priority) {
 			else if (priority == 0) {
 				priority = 1;
 			}
-
 		}
 		std::cout << "                  No one won" << std::endl;
 		std::cout << "         Do you want to play again? Yes(1)/No(0)";
 		std::cin >> answer;
-		//while (!(checkAnswer(4, answer))) { std::cin >> answer; }
-		if (answer) {
+		while (!validation(4, answer)) { std::cin >> answer; }
+		if (answer != "0") {
 			restart();
 		}
 		else {
-
 			sm.process_event(game_exit());
 			exit(0);
 		}
 	}
 	else {
-
 		for (auto i = 0; i < 4; i++) {
 			std::cout << "      " << players[0].getName() << ", your turn: ";
-			std::cin >> turn;
-			//while (!(checkAnswer(3, turn))) { std::cin >> turn; }
+			std::cin >> answer;
+			while (!validation(3, answer) || !noRepaint(answer)) { std::cin >> answer; }
+			turn = std::stoi(answer);
 			if (turn == 9) {
 				system("cls");
-				rst = 1;
+				rst = true;
 				if (priority == 1) {
 					priority = 0;
 				}
 				else if (priority == 0) {
 					priority = 1;
 				}
+				botMode = false;
 				restart();
 			}
 			sign = players[0].getSign();
@@ -304,7 +295,9 @@ void Game::play(int& priority) {
 			checkWin('O');
 		}
 		std::cout << "                " << players[0].getName() << ", your turn" << std::endl;
-		std::cin >> turn;
+		std::cin >> answer;
+		while (!validation(3, answer) || !noRepaint(answer)) { std::cin >> answer; }
+		turn = std::stoi(answer);
 		sign = players[0].getSign();
 		makeMove('X', turn);
 		board.showField();
@@ -313,8 +306,8 @@ void Game::play(int& priority) {
 	std::cout << "                  No one won" << std::endl;
 	std::cout << "         Do you want to play again? Yes(1)/No(0)";
 	std::cin >> answer;
-	//while (!(checkAnswer(4, answer))) { std::cin >> answer; }
-	if (answer) {
+	while (!validation(4, answer)) { std::cin >> answer; }
+	if (answer != "0") {
 		restart();
 	}
 	else {
@@ -323,15 +316,15 @@ void Game::play(int& priority) {
 	}
 }
 
-void Game::makeMove(const char& sign,const int& move) {
+void Game::makeMove(const char& sign, const int& move) {
 	board.setField(sign, move);
 }
 
 void Game::restart() {
-	if (rst == 0) {
+	if (rst == false) {
 		board.clearField();
 	}
-	rst = 1;
+	rst = true;
 	system("cls");
 	start();
 }
@@ -363,7 +356,7 @@ void Game::checkWin(const char& sign) {
 	}
 }
 void Game::congratulation(const char& sign) {
-	bool answer{};
+	std::string answer{};
 	if (sign == 'X') {
 		std::cout << "         X - Wins!" << std::endl;
 	}
@@ -372,8 +365,8 @@ void Game::congratulation(const char& sign) {
 	}
 	std::cout << "         Do you want to play again? Yes(1)/No(0): ";
 	std::cin >> answer;
-	//while (!(checkAnswer(4, answer))) { std::cin >> answer; }
-	if (answer) {
+	while (!validation(4, answer)) { std::cin >> answer; }
+	if (answer != "0") {
 		restart();
 	}
 	else {
@@ -381,46 +374,86 @@ void Game::congratulation(const char& sign) {
 		exit(0);
 	}
 }
-bool Game::checkAnswer(const int& var,const std::string& answer) {
+bool Game::validation(const int& var, const std::string& answer) {
 	switch (var) {
 	case 1: {
-			const std::regex myRegex1("[0-2]");
-			if (!(std::regex_match(answer, myRegex1))) {
-				std::cout << "Incorrect answer\n";
+		const std::regex myRegex2("[0,1,2]");
+		if (std::cin.fail()) {
+			std::cout << "Incorrect answer. You can enter [1] or [0] for choose game mode or [2] for exit.\n";
+			return false;
+		}
+		else {
+			if (std::regex_match(answer, myRegex2)) {
+				return true;
+			}
+			else {
+				std::cout << "Incorrect answer.You can enter[1] or [0] for choose game mode or [2] for exit.\n";
 				return false;
 			}
-			else return true;
-			break;
-		}
-	case 2:  {
-			const std::regex myRegex2("[0-1]");
-			if (!(std::regex_match(answer, myRegex2))) {
-				std::cout << "Incorrect answer\n";
-				return false;
-			}
-			else return true;
-			break;
-		}
-	case 3: {
-			const std::regex myRegex3("[0-9]");
-			if (!(std::regex_match(answer, myRegex3))) {
-				std::cout << "Incorrect answer\n";
-				return false;
-			}
-			else return true;
-			break;
-		}
-	case 4:  {
-			const std::regex myRegex4("[0,1,9]");
-			if (!(std::regex_match(answer, myRegex4))) {
-				std::cout << "Incorrect answer\n";
-				break;
-			}
-			else return true;
 			break;
 		}
 	}
-	
+	case 2: {
+		const std::regex myRegex2("[0,1]");
+		if (std::cin.fail()) {
+			std::cout << "Incorrect answer .You can enter[1] or [0] for choose Your sign.\n";
+			return false;
+		}
+		else {
+			if (std::regex_match(answer, myRegex2)) {
+				return true;
+			}
+			else {
+				std::cout << "Incorrect answer .You can enter[1] or [0] for choose Your sign.\n";
+				return false;
+			}
+			break;
+		}
+	}
+	case 3: {
+		const std::regex myRegex2("[0-9]");
+		if (std::cin.fail()) {
+			std::cout << "Incorrect answer. You can enter [0-8] for make a move or [9] for enter game menu.\n";
+			return false;
+		}
+		else {
+			if (std::regex_match(answer, myRegex2)) {
+				return true;
+			}
+			else {
+				std::cout << "Incorrect answer. You can enter [0-8] for make a move or [9] for enter game menu.\n";
+				return false;
+			}
+			break;
+		}
+	}
+	case 4: {
+		const std::regex myRegex2("[0,1,9]");
+		if (std::cin.fail()) {
+			std::cout << "Incorrect answer. You can enter [1] for play again, [0] for finish game or [9] for enter game menu.\n";
+			return false;
+		}
+		else {
+			if (std::regex_match(answer, myRegex2)) {
+				return true;
+			}
+			else {
+				std::cout << "Incorrect answer. You can enter [1] for play again, [0] for finish game or [9] for enter game menu.\n";
+				return false;
+			}
+			break;
+		}
+	}
+	}
 }
-
-
+bool Game::noRepaint(const std::string& answer) {
+	if (answer == "9") { return true; }
+	    int turn = std::stoi(answer);
+		if (board.getField()[turn] != 'X' && board.getField()[turn] != 'O') {
+			return true;
+		}
+		else { 
+			std::cout << "This move has already been made, select a free cell.\n";
+			return false; 
+		}
+}
