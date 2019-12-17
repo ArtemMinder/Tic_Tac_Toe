@@ -65,12 +65,19 @@ public:
 	void congratulation(const char& sign);
 	bool validation(const int& var, const std::string& answer);
 	bool noRepaint(const std::string& turn);
-
 private:
 	std::vector<Player> players{};
 	Board board;
 	bool botMode = false;
 	bool rst = false;
 	GameSM sm;
+};
+enum Mods : bool {
+	singlePlayer = false,
+	multiPlayer = true
+};
+enum Figures : char {
+	cross = 'X',
+	zeros = 'O'
 };
 #endif

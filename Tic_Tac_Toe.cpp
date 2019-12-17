@@ -119,8 +119,7 @@ void Game::start() {
 			std::cin >> first;
 			players[0].setName(first);
 			players[1].setName("Computer");
-			botMode = true;
-			answer = true;
+			botMode = Mods::multiPlayer;
 			system("cls");
 		}
 		else if (answer == "1"){
@@ -140,10 +139,10 @@ void Game::start() {
 			while (!validation(2, answer)) { std::cin >> answer; }
 			system("cls");
 			if (answer!="0") {
-				players[priority].setSign('X');
+				players[priority].setSign(Figures::cross);
 			}
 			else {
-				players[priority].setSign('O');
+				players[priority].setSign(Figures::zeros);
 			}
 			if (priority == 0) {
 				priority = 1;
@@ -152,9 +151,9 @@ void Game::start() {
 				priority = 0;
 			}
 			if (answer != "0") {
-				players[priority].setSign('O');
+				players[priority].setSign(Figures::zeros);
 			}
-			else { players[priority].setSign('X'); }
+			else { players[priority].setSign(Figures::cross); }
 		}
 	} 
 	else if (rst){
@@ -207,7 +206,7 @@ void Game::play(int& priority) {
 	sm.process_event(game_run());
 	std::cout << "                If You go to menu - press 9" << std::endl;
 	board.showField();
-	if (botMode == false) {
+	if (botMode == Mods::singlePlayer) {
 		for (auto i = 0; i < 9; i++) {
 			std::cout << "               " << players[priority].getName() << ", your turn: ";
 			std::cin >> answer;
@@ -225,16 +224,16 @@ void Game::play(int& priority) {
 				restart();
 			}
 			sign = players[priority].getSign();
-			if (sign == 'X') {
+			if (sign == Figures::cross) {
 
-				makeMove('X', turn);
+				makeMove(Figures::cross, turn);
 				board.showField();
-				checkWin('X');
+				checkWin(Figures::cross);
 			}
 			else {
-				makeMove('O', turn);
+				makeMove(Figures::zeros, turn);
 				board.showField();
-				checkWin('O');
+				checkWin(Figures::zeros);
 			}
 			if (priority == 1) {
 				priority = 0;
@@ -269,18 +268,18 @@ void Game::play(int& priority) {
 				else if (priority == 0) {
 					priority = 1;
 				}
-				botMode = false;
+				botMode = Mods::singlePlayer;
 				restart();
 			}
 			sign = players[0].getSign();
-			makeMove('X', turn);
+			makeMove(Figures::cross, turn);
 			board.showField();
-			checkWin('X');
+			checkWin(Figures::cross);
 			std::cout << "               " << players[1].getName() << "'s turn" << std::endl;
 			std::vector<char> fields = board.getField();
 			std::vector<char> free{};
 			for (auto i = 0; i < 9; i++) {
-				if (fields[i] != 'X' && fields[i] != 'O') {
+				if (fields[i] != Figures::cross && fields[i] != Figures::zeros) {
 					free.push_back(i);
 				}
 			}
@@ -288,18 +287,18 @@ void Game::play(int& priority) {
 			std::mt19937 engine(dev());
 			std::uniform_int_distribution<size_t> uid(0, free.size());
 			sign = players[1].getSign();
-			makeMove('O', free[uid(engine)]);
+			makeMove(Figures::zeros, free[uid(engine)]);
 			board.showField();
-			checkWin('O');
+			checkWin(Figures::zeros);
 		}
 		std::cout << "                " << players[0].getName() << ", your turn" << std::endl;
 		std::cin >> answer;
 		while (!validation(3, answer) || !noRepaint(answer)) { std::cin >> answer; }
 		turn = std::stoi(answer);
 		sign = players[0].getSign();
-		makeMove('X', turn);
+		makeMove(Figures::cross, turn);
 		board.showField();
-		checkWin('X');
+		checkWin(Figures::cross);
 	}
 	std::cout << "                  No one won" << std::endl;
 	std::cout << "         Do you want to play again? Yes(1)/No(0)";
@@ -355,7 +354,7 @@ void Game::checkWin(const char& sign) {
 }
 void Game::congratulation(const char& sign) {
 	std::string answer{};
-	if (sign == 'X') {
+	if (sign == Figures::cross) {
 		std::cout << "         X - Wins!" << std::endl;
 	}
 	else {
@@ -388,7 +387,6 @@ bool Game::validation(const int& var, const std::string& answer) {
 					std::cout << "Incorrect answer.You can enter[1] or [0] for choose game mode or [2] for exit.\n";
 					return false;
 				}
-				break;
 			}
 		}
 		case 2: {
@@ -405,7 +403,6 @@ bool Game::validation(const int& var, const std::string& answer) {
 					std::cout << "Incorrect answer .You can enter[1] or [0] for choose Your sign.\n";
 					return false;
 				}
-				break;
 			}
 		}
 		case 3: {
@@ -422,7 +419,6 @@ bool Game::validation(const int& var, const std::string& answer) {
 					std::cout << "Incorrect answer. You can enter [0-8] for make a move or [9] for enter game menu.\n";
 					return false;
 				}
-				break;
 			}
 		}
 		case 4: {
@@ -439,15 +435,17 @@ bool Game::validation(const int& var, const std::string& answer) {
 					std::cout << "Incorrect answer. You can enter [1] for play again, [0] for finish game or [9] for enter game menu.\n";
 					return false;
 				}
-				break;
+
 			}
 		}
+		default:
+			return false;
 	}
 }
 bool Game::noRepaint(const std::string& answer) {
 	if (answer == "9") { return true; }
 	int turn = std::stoi(answer);
-	if (board.getField()[turn] != 'X' && board.getField()[turn] != 'O') {
+	if (board.getField()[turn] != Figures::cross && board.getField()[turn] != Figures::zeros) {
 		return true;
 	}
 	else {

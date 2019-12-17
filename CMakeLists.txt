@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project (Tic_Tac_Toe)
+target_compile_features(myapp cxx_std_17)
 if (CMAKE_VERSION VERSION_GREATER 3.11)
 cmake_policy(SET CMP0074 NEW)
 endif()

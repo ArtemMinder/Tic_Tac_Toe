@@ -14,5 +14,7 @@ x64
 
 *.sln
 
+ *.json
+
 *.vcxproj.*
 
