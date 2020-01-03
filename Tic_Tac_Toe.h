@@ -6,6 +6,9 @@
 #include <vector>
 #include <random>
 #include <regex>
+#include "congratultion.h"
+#include "settingwindow.h"
+#include "gameplaywindow.h"
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/simple_state.hpp>
@@ -34,50 +37,54 @@ struct GameSM : sc::state_machine<GameSM, InitGame> {};
 
 class Player {
 public:
-	Player() = default;
-	void setName(const std::string& newName);
-	std::string getName() const;
-	void setSign(const char& newSign);
-	char getSign() const;
+    Player() = default;
+    void setName(const std::string& newName);
+    std::string getName() const;
+    void setSign(const char& newSign);
+    char getSign() const;
 private:
-	std::string name{};
-	char sign{};
+    std::string name{};
+    char sign{};
 };
 
 class Board {
 public:
-	Board();
-	void setField(const char& newSign, const int& position);
-	std::vector<char> getField()const;
-	void showField() const;
-	void clearField();
+    Board();
+    void setField(const char& newSign, const int& position);
+    std::vector<char> getField()const;
+    void showField() const;
+    void clearField();
 private:
-	std::vector<char> field{};
+    std::vector<char> field{};
 };
 
 class Game {
 public:
-	void	start();
-	void play(int& priority);
-	void makeMove(const char& sign, const int& move);
-	void restart();
-	void checkWin(const char& sign);
-	void congratulation(const char& sign);
-	bool validation(const int& var, const std::string& answer);
-	bool noRepaint(const std::string& turn);
+    void	start();
+    void play(int& priority);
+    void makeMove(const char& sign, const int& move);
+    void restart();
+    void checkWin(const char& sign);
+    void congratulation(const char& sign);
+    bool validation(const int& var, const std::string& answer);
+    bool noRepaint(const std::string& turn);
 private:
-	std::vector<Player> players{};
-	Board board;
-	bool botMode = false;
-	bool rst = false;
-	GameSM sm;
+    std::vector<Player> players{};
+    Board board;
+    bool botMode = false;
+    bool rst = false;
+    Congratultion win;
+    GameplayWindow gamewindow;
+    SettingWindow setting;
+    GameSM sm;
 };
 enum Mods : bool {
-	singlePlayer = false,
-	multiPlayer = true
+    singlePlayer = false,
+    multiPlayer = true
 };
 enum Figures : char {
-	cross = 'X',
-	zeros = 'O'
+    cross = 'X',
+    zeros = 'O'
 };
+
 #endif

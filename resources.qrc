@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>resources/success.ico</file>
+        <file>resources/back.png</file>
+        <file>resources/button.png</file>
+        <file>resources/zero.ico</file>
+        <file>resources/cross.ico</file>
+        <file>resources/exit.png</file>
+        <file>resources/menu .png</file>
+        <file>resources/cup.png</file>
+        <file>resources/victory.png</file>
+        <file>resources/playButton.png</file>
+        <file>resources/tic-tac-toe (1).png</file>
+        <file>resources/logo1.png</file>
+        <file>resources/Draw.png</file>
+    </qresource>
+</RCC>
