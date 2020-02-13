@@ -12,9 +12,8 @@ endif()
 find_package(Boost 1.71.0)
 include_directories(${Boost_INCLUDE_DIR})
 set(CORELIBS ${Boost_LIBRARIES})
-find_package(Qt5Widgets CONFIG
-        PATHS D:/Programms/QT/5.12.6/mingw73_64/lib/cmake/Qt5Widgets
-       NO_DEFAULT_PATH)
+find_package(Qt5Widgets REQUIRED)
+
 list(APPEND THIRD_PARTY_LIBS Qt5::Widgets Qt5::Core Qt5::Gui)
 
 set(CMAKE_CXX_STANDARD 14)
